@@ -117,7 +117,15 @@ test_loader = torch.utils.data.DataLoader(dataset=test_dataset,
 
 
 def test(loader):
-    """在验证/测试集上评估模型表现"""
+    """在验证/测试集上评估模型表现
+
+    参数
+    ------
+    loader: ``DataLoader``
+        需要传入 ``torch.utils.data.DataLoader`` 对象。若在本地评估，
+        请确保数据已正确加载到 ``loader`` 中。
+    """
+
     cnn.eval()    # 切换为评估模式，BN 层使用滑动平均的均值和方差
 
     correct = []

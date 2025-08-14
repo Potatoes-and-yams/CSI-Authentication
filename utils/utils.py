@@ -1,26 +1,34 @@
+"""辅助工具函数集合
+
+包含 One-Hot 编码、CSV 日志记录及 Cutout 数据增强等常用功能。
+如需在本地环境中使用，请确保已安装 ``torch``、``numpy`` 等依赖。
+"""
+
 import torch
-import csv      #逗号分隔值，常用的文本格式，用以存储表格数据，包括数字或者字符。
+import csv      # 逗号分隔值格式，用于读写训练日志
 import numpy as np
 
 
-def encode_onehot(labels, n_classes):     #labels：整数编码
+def encode_onehot(labels, n_classes):
+    """将整数标签转为 one-hot 向量"""
     onehot = torch.FloatTensor(labels.size()[0], n_classes)
     labels = labels.data
     if labels.is_cuda:
         onehot = onehot.cuda()
     onehot.zero_()
-    onehot.scatter_(1, labels.view(-1, 1), 1)  #scatter_(dim, index, src) dim：维度，表示在第几维上操作；index：索引，后面再解释；src：用来填充的tensor。
-    #行不变，变化列
+    # scatter_ 在指定维度根据索引填充 1，其余保持为 0
+    onehot.scatter_(1, labels.view(-1, 1), 1)
     return onehot
 
 
 class CSVLogger():
-    def __init__(self, args, filename='log.csv', fieldnames=['epoch']):
+    """简单的 CSV 日志记录器"""
 
+    def __init__(self, args, filename='log.csv', fieldnames=['epoch']):
         self.filename = filename
         self.csv_file = open(filename, 'w')
 
-        # Write model configuration at top of csv
+        # 将实验配置写在文件头部，便于复现
         writer = csv.writer(self.csv_file)
         for arg in vars(args):
             writer.writerow([arg, getattr(args, arg)])
@@ -32,8 +40,8 @@ class CSVLogger():
         self.csv_file.flush()
 
     def writerow(self, row):
-        self.writer.writerow(row)  #行
-        self.csv_file.flush()      #齐平
+        self.writer.writerow(row)
+        self.csv_file.flush()  # 立即写入磁盘
 
     def close(self):
         self.csv_file.close()
