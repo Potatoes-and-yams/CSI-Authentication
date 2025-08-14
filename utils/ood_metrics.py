@@ -1,3 +1,9 @@
+"""开集识别与异常检测指标
+
+提供计算 TPR95、检测错误率、ROC 曲线等常用评估指标的函数。
+在本地分析模型表现时，可直接导入本模块使用。
+"""
+
 import numpy as np
 from models.vgg import VGG
 import torch.nn.functional as F

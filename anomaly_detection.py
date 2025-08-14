@@ -1,3 +1,14 @@
+"""异常检测脚本
+
+该脚本用于评估训练好的 CSI 认证模型在不同异常数据集上的表现，
+可以计算 ROC 曲线、混淆矩阵等多种指标。
+在本地运行前请确保已准备好以下环境：
+
+1. 将 ``channel_ind.mat`` 和 ``channel_ood.mat`` 数据文件放置在 ``data`` 目录下；
+2. 安装所需依赖：``torch``、``numpy``、``h5py``、``scikit-learn`` 等；
+3. 在 ``checkpoints`` 目录中存放训练好的模型参数文件。
+"""
+
 import pdb
 import argparse
 import numpy as np
@@ -136,6 +147,16 @@ cnn.eval()  #不启用 BatchNormalization 和 Dropout
 ##############################################
 
 def evaluate(data_loader, mode):
+    """根据不同模式计算置信度或概率分数
+
+    参数
+    ------
+    data_loader: ``DataLoader``
+        待评估的数据集迭代器。
+    mode: str
+        处理方式，可选值 ``confidence``、``confidence_scaling``、``baseline``、``ODIN``。
+    """
+
     out = []
     xent = nn.CrossEntropyLoss()
     for data in data_loader:
